@@ -44,7 +44,7 @@ async def newlist(ctx, message):
 @bot.command()
 # Ctx its context, thats the parameters of the bot.
 # Message its the input of the users.
-async def deletelist(ctx, message):
+async def deletelist(ctx, message): # Maybe is should change this to removelist
     path_id = str(ctx.guild.id) # Get the ID from the server.
     try: # Try to get the exception if the file dont exist.
         os.remove(listPath+str(path_id)+"/"+str(message)+".txt") # remove list.txt.
