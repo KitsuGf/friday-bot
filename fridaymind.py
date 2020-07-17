@@ -51,7 +51,7 @@ async def deletelist(ctx, message):  # Maybe is should change this to removelist
     path_id = str(ctx.guild.id)  # Get the ID from the server.
     try:  # Try to get the exception if the file dont exist.
         os.remove(listPath + str(path_id) + "/" + str(message) + ".txt")  # remove list.txt.
-        await  ctx.channel.send("Lista borrada")  # Bot advice to user that the list its deleted.
+        await  ctx.channel.send("Lista borrada" + thumbsUp)  # Bot advice to user that the list its deleted.
     except:  # Exception what catch the "File dont exist."
         await  ctx.channel.send("No existe la lista que deseas borrar.")  # Advice to user about not existing list.txt.
 
@@ -71,7 +71,7 @@ async def addtask(ctx, args1, *args):
         f.write(str(args).replace("(", "").replace("'", "").replace(",", "").replace(")",
                                                                                      "") + "\n")  # Write the task in the file.
         f.close()  # Close the File Writer.
-        await ctx.channel.send("Tarea añadida a la lista **" + args1 + "**")  # Bot advice.
+        await ctx.channel.send("Tarea añadida a la lista **" + args1 + "** " + thumbsUp)  # Bot advice.
 
 # TODO make a show list in discord.
 @bot.command()
