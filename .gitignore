@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 /tk/
 /venv/
 /.idea/
+=======
+/tk/
+/venv/
+/.idea/
+>>>>>>> Test
 /lists/
 prueba.py
