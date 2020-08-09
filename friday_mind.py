@@ -138,7 +138,7 @@ async def new_list(ctx, task_list):
 async def remove_list(ctx, task_list):
     try:
         os.remove(task_list_path(str(ctx.guild.id), task_list))
-        await  ctx.channel.send("The list named " + task_list + " has been succesfully removed!")
+        await  ctx.channel.send("The list named " + task_list + " has been successfully removed!")
     except FileNotFoundError:
         await  ctx.channel.send("There is no list called " + task_list + " in my database.")
 
@@ -154,48 +154,107 @@ async def add_task(ctx, list_id, task, author="No one", pr=3, status="todo"):
 
 @bot.command()
 async def edit_pr(ctx, list_id, task_id, pr):
-    id_group = str(ctx.guild.id)
-    task_list = read_task_list(id_group, list_id)
-    task_list[int(task_id) - 1].priority = pr
-    write_task_list(id_group, list_id, task_list)
+    try:
+        id_group = str(ctx.guild.id)
+        task_list = read_task_list(id_group, list_id)
+        task_list[int(task_id) - 1].priority = pr
+        write_task_list(id_group, list_id, task_list)
+    except FileNotFoundError:
+        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+    except IndexError:
+        await ctx.channel.send(
+            "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
 @bot.command()
 async def edit_author(ctx, list_id, task_id, author):
-    id_group = str(ctx.guild.id)
-    task_list = read_task_list(id_group, list_id)
-    task_list[int(task_id) - 1].author = author
-    write_task_list(id_group, list_id, task_list)
+    try:
+        id_group = str(ctx.guild.id)
+        task_list = read_task_list(id_group, list_id)
+        task_list[int(task_id) - 1].author = author
+        write_task_list(id_group, list_id, task_list)
+    except FileNotFoundError:
+        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+    except IndexError:
+        await ctx.channel.send(
+            "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
 @bot.command()
 async def edit_status(ctx, list_id, task_id, status):
-    id_group = str(ctx.guild.id)
-    task_list = read_task_list(id_group, list_id)
-    task_list[int(task_id) - 1].status = status
-    write_task_list(id_group, list_id, task_list)
+    try:
+        id_group = str(ctx.guild.id)
+        task_list = read_task_list(id_group, list_id)
+        task_list[int(task_id) - 1].status = status
+        write_task_list(id_group, list_id, task_list)
+    except FileNotFoundError:
+        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+    except IndexError:
+        await ctx.channel.send(
+            "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
 @bot.command()
 async def edit_task(ctx, list_id, task_id, task):
-    id_group = str(ctx.guild.id)
-    task_list = read_task_list(id_group, list_id)
-    task_list[int(task_id) - 1].name = task
-    write_task_list(id_group, list_id, task_list)
+    try:
+        id_group = str(ctx.guild.id)
+        task_list = read_task_list(id_group, list_id)
+        task_list[int(task_id) - 1].name = task
+        write_task_list(id_group, list_id, task_list)
+    except FileNotFoundError:
+        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+    except IndexError:
+        await ctx.channel.send(
+            "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
 @bot.command()
 async def show_list(ctx, list_id):
-    id_group = str(ctx.guild.id)
-    get_list = read_task_list(id_group, list_id)
-    await ctx.channel.send(format_task_list(get_list))
+    try:
+        id_group = str(ctx.guild.id)
+        get_list = read_task_list(id_group, list_id)
+        await ctx.channel.send(format_task_list(get_list))
+    except FileNotFoundError:
+        await ctx.channel.send("Theres no list with name **" + list_id + "**")
 
+
+# TODO END THE HELP ME ASAP.
+# TODO TRY TO READ AS FILE.
 @bot.command()
 async def help_me(ctx):
-    await ctx.channel.send("```css\n/new_list - Create a new list, example: /new_list Testlist \n"
+    # region Long Message of help_me
+    await ctx.channel.send("```yaml\n                                                               Commands```"
+                           "```css\n/new_list - Create a new list, example: /new_list Testlist \n"
                            "/add_task - Create a new task but you need to specify the list, example: /add_task Testlist \"TestTaskName between quotes always\"\n"
                            "/remove_list - Remove the List, example: /remove_list Testlist \n"
-                           "/show_list - Show the list what you specify, example: /show_list Testlist```")
+                           "/show_list - Show the list what you specify, example: /show_list Testlist\n"
+                           "/edit_task - TBE\n"
+                           "/edit_author - TBE\n"
+                           "/edit_status - TBE\n"
+                           "/edit_pr - TBE```"
+                           "```yaml\n                                                             Emoji System```"
+                           "```css\nHow works the Priority System?\n"
+                           "First of all, you need to use number between 1 and 4 to select the priority of the task.```\n"
+                           + "\t" + pr_emojis[1] + " = `1 - Maximum Priority.`\n"
+                           + "\t" + pr_emojis[2] + " = `2 - High Priority.`\n"
+                           + "\t" + pr_emojis[3] + " = `3 - Medium Priority.`\n"
+                           + "\t" + pr_emojis[4] + " = `4 - Low Priority.`\n\n"
+                                                   "```css\nHow Works the Status System?\n"
+                                                   "Firs of all, you need to know what status exist on the program, there are various keywords to select it.\n"
+                                                   "The words are:\n"
+                                                   "\t- todo = Means its without status.\n"
+                                                   "\t- await = Mean its waiting to be approved.\n"
+                                                   "\t- fixing = Means someone its trying to fix some problem.\n"
+                                                   "\t- done = Means the task is done. \n"
+                                                   "\t- cancel = Means the task its cancelled for some reason.\n"
+                                                   "\t- onwork = Means someone its working on it.```\n"
+                           + "\t" + task_status_emojis["todo"] + " = `todo`\n"
+                           + "\t" + task_status_emojis["await"] + " = `await`\n"
+                           + "\t" + task_status_emojis["fixing"] + " = `fixing`\n"
+                           + "\t" + task_status_emojis["done"] + " = `done`\n"
+                           + "\t" + task_status_emojis["cancel"] + " = `cancel`\n"
+                           + "\t" + task_status_emojis["onwork"] + " = `onwork`\n")
+    # endregion
 
 
 # BOT RUNNING WITH TOKEN.
