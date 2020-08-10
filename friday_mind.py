@@ -5,6 +5,9 @@ from discord.ext.commands import CommandNotFound
 import csv
 
 
+# TODO Exceptions: Make all the exceptions and error control.
+
+
 # MODEL
 class Task:
     def __init__(self, id, name, author, priority, status):
@@ -158,15 +161,19 @@ async def edit_pr(ctx, list_id, task_id, pr):
     try:
         id_group = str(ctx.guild.id)
         task_list = read_task_list(id_group, list_id)
-        task_list[int(task_id) - 1].priority = pr
+        task_list[int(task_id) - 1].priority = int(pr)
         write_task_list(id_group, list_id, task_list)
+        await ctx.channel.send("Priority of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
         await ctx.channel.send("Theres no list with name **" + list_id + "**")
     except IndexError:
         await ctx.channel.send(
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
+    except ValueError:
+        await ctx.channel.send("Error **" + pr + "** is not a number!")
 
 
+# TODO Author Exception
 @bot.command()
 async def edit_author(ctx, list_id, task_id, author):
     try:
@@ -174,6 +181,7 @@ async def edit_author(ctx, list_id, task_id, author):
         task_list = read_task_list(id_group, list_id)
         task_list[int(task_id) - 1].author = author
         write_task_list(id_group, list_id, task_list)
+        await ctx.channel.send("Author of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
         await ctx.channel.send("Theres no list with name **" + list_id + "**")
     except IndexError:
@@ -181,6 +189,7 @@ async def edit_author(ctx, list_id, task_id, author):
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
+# TODO Status Exception
 @bot.command()
 async def edit_status(ctx, list_id, task_id, status):
     try:
@@ -188,6 +197,7 @@ async def edit_status(ctx, list_id, task_id, status):
         task_list = read_task_list(id_group, list_id)
         task_list[int(task_id) - 1].status = status
         write_task_list(id_group, list_id, task_list)
+        await ctx.channel.send("Status of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
         await ctx.channel.send("Theres no list with name **" + list_id + "**")
     except IndexError:
@@ -195,6 +205,7 @@ async def edit_status(ctx, list_id, task_id, status):
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
 
 
+# TODO Task Exception
 @bot.command()
 async def edit_task(ctx, list_id, task_id, task):
     try:
@@ -202,6 +213,7 @@ async def edit_task(ctx, list_id, task_id, task):
         task_list = read_task_list(id_group, list_id)
         task_list[int(task_id) - 1].name = task
         write_task_list(id_group, list_id, task_list)
+        await ctx.channel.send("Task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
         await ctx.channel.send("Theres no list with name **" + list_id + "**")
     except IndexError:
@@ -222,7 +234,6 @@ async def show_list(ctx, list_id):
 # TODO END THE HELP ME ASAP.
 @bot.command()
 async def help_me(ctx):
-
     with open(path_help_me, "r") as file:
         await ctx.channel.send(file.read())
 
