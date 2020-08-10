@@ -1,0 +1,34 @@
+```yaml
+                                                               Commands``````css
+/new_list - Create a new list, example: /new_list Testlist
+/add_task - Create a new task but you need to specify the list, example: /add_task Testlist "TestTaskName between quotes always"
+/remove_list - Remove the List, example: /remove_list Testlist
+/show_list - Show the list what you specify, example: /show_list Testlist
+/edit_task - TBE
+/edit_author - TBE
+/edit_status - TBE
+/edit_pr - TBE``````yaml
+                                                             Emoji System``````css
+How works the Priority System?
+First of all, you need to use number between 1 and 4 to select the priority of the task.```
+		:bangbang: = `1 - Maximum Priority.`
+		:exclamation: = `2 - High Priority.`
+		:grey_exclamation: = `3 - Medium Priority.`
+		:question: = `4 - Low Priority.`
+
+```css
+How Works the Status System?
+Firs of all, you need to know what status exist on the program, there are various keywords to select it.
+The words are:
+    - todo = Means its without status.
+    - await = Mean its waiting to be approved.
+    - fixing = Means someone its trying to fix some problem.
+    - done = Means the task is done.
+    - cancel = Means the task its cancelled for some reason.
+    - onwork = Means someone its working on it.```
+		:pencil: = `todo`
+    	:fingers_crossed: = `await`
+    	:wrench: = `fixing`
+    	:white_check_mark: = `done`
+    	:x: = `cancel`
+    	:muscle: = `onwork`

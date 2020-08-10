@@ -19,8 +19,9 @@ class Task:
 
 
 # VARS
-path = 'tk/tk.txt'  # Path where is the token file.
-tk_file = open(path, "r")  # Reader from txt file.
+path = 'tk/tk.txt'
+tk_file = open(path, "r")
+path_help_me = 'src/help_me.txt'
 
 # Emojis
 pr_emojis = {
@@ -219,42 +220,11 @@ async def show_list(ctx, list_id):
 
 
 # TODO END THE HELP ME ASAP.
-# TODO TRY TO READ AS FILE.
 @bot.command()
 async def help_me(ctx):
-    # region Long Message of help_me
-    await ctx.channel.send("```yaml\n                                                               Commands```"
-                           "```css\n/new_list - Create a new list, example: /new_list Testlist \n"
-                           "/add_task - Create a new task but you need to specify the list, example: /add_task Testlist \"TestTaskName between quotes always\"\n"
-                           "/remove_list - Remove the List, example: /remove_list Testlist \n"
-                           "/show_list - Show the list what you specify, example: /show_list Testlist\n"
-                           "/edit_task - TBE\n"
-                           "/edit_author - TBE\n"
-                           "/edit_status - TBE\n"
-                           "/edit_pr - TBE```"
-                           "```yaml\n                                                             Emoji System```"
-                           "```css\nHow works the Priority System?\n"
-                           "First of all, you need to use number between 1 and 4 to select the priority of the task.```\n"
-                           + "\t" + pr_emojis[1] + " = `1 - Maximum Priority.`\n"
-                           + "\t" + pr_emojis[2] + " = `2 - High Priority.`\n"
-                           + "\t" + pr_emojis[3] + " = `3 - Medium Priority.`\n"
-                           + "\t" + pr_emojis[4] + " = `4 - Low Priority.`\n\n"
-                                                   "```css\nHow Works the Status System?\n"
-                                                   "Firs of all, you need to know what status exist on the program, there are various keywords to select it.\n"
-                                                   "The words are:\n"
-                                                   "\t- todo = Means its without status.\n"
-                                                   "\t- await = Mean its waiting to be approved.\n"
-                                                   "\t- fixing = Means someone its trying to fix some problem.\n"
-                                                   "\t- done = Means the task is done. \n"
-                                                   "\t- cancel = Means the task its cancelled for some reason.\n"
-                                                   "\t- onwork = Means someone its working on it.```\n"
-                           + "\t" + task_status_emojis["todo"] + " = `todo`\n"
-                           + "\t" + task_status_emojis["await"] + " = `await`\n"
-                           + "\t" + task_status_emojis["fixing"] + " = `fixing`\n"
-                           + "\t" + task_status_emojis["done"] + " = `done`\n"
-                           + "\t" + task_status_emojis["cancel"] + " = `cancel`\n"
-                           + "\t" + task_status_emojis["onwork"] + " = `onwork`\n")
-    # endregion
+
+    with open(path_help_me, "r") as file:
+        await ctx.channel.send(file.read())
 
 
 # BOT RUNNING WITH TOKEN.
