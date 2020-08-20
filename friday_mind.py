@@ -3,12 +3,15 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 import csv
+from discord.ext.commands import MemberConverter
 
 
 # TODO Exceptions: Make all the exceptions and error control.
 
 
 # MODEL
+
+
 class Task:
     def __init__(self, id, name, author, priority, status):
         self.id = id
@@ -103,19 +106,38 @@ def read_task_list(group_id, list_id):
 bot = commands.Bot(command_prefix='/')
 
 
+# METHODS
+
+def add_task_check(pr, status):
+    status_list = {"onwork", "done", "cancel", "fixing", "todo", "await"}
+    if pr <= 0 or pr > 4 or status not in status_list:
+        checker = False
+    else:
+        checker = True
+    return checker
+
+
+def check_users_guild(author):
+    for guild in bot.guilds:
+        for author in guild.members:
+            checker = True
+
+    return checker
+
+
 # EVENTS
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
         return await ctx.channel.send("The command is misspelled or does not exist. "
                                       "If you need help, use the command **/help_me** please.")
-    raise error
 
 
 @bot.event
 async def on_ready():
     # BOT STATUS
     await bot.change_presence(activity=discord.Game(name="/help_me"))
+    print("F.R.I.D.A.Y is online.")
 
 
 # COMMANDS
@@ -132,7 +154,7 @@ async def new_list(ctx, task_list):
         try:
             new_task_file = open(task_list_path(str(ctx.guild.id), task_list), "x")
             new_task_file.close()
-            await ctx.channel.send("List **" + str(task_list) + "** created succesfully!  " + reaction_emojis["clap"])
+            await ctx.channel.send("List **" + str(task_list) + "** created successfully!  " + reaction_emojis["clap"])
         except FileExistsError:
             await ctx.channel.send(
                 "Sorry, you already have a list called **" + task_list + "**. You can create a new one or delete the old one.")
@@ -144,16 +166,23 @@ async def remove_list(ctx, task_list):
         os.remove(task_list_path(str(ctx.guild.id), task_list))
         await  ctx.channel.send("The list named " + task_list + " has been successfully removed!")
     except FileNotFoundError:
-        await  ctx.channel.send("There is no list called " + task_list + " in my database.")
+        await  ctx.channel.send("There's no list called " + task_list + " in my database.")
 
 
 @bot.command()
 async def add_task(ctx, list_id, task, author="No one", pr=3, status="todo"):
-    id_group = str(ctx.guild.id)
-    task_list = read_task_list(id_group, list_id)
-    new_task = Task(len(task_list) + 1, task, author, pr, status)
-    task_list.append(new_task)
-    write_task_list(id_group, list_id, task_list)
+    converter = MemberConverter()
+    member = await converter.convert(ctx, author)
+    if not add_task_check(pr, status):
+        await ctx.channel.send(
+            "Remember that the **priority** must be between **1** and **4** and the **status** must be choosen between **these**: \n\t"
+            "`- todo`\n\t`- await`\n\t`- cancel`\n\t`- done`\n\t`- onwork`\n\t`- fixing`")
+    elif check_users_guild(member):
+        id_group = str(ctx.guild.id)
+        task_list = read_task_list(id_group, list_id)
+        new_task = Task(len(task_list) + 1, task, author, pr, status)
+        task_list.append(new_task)
+        write_task_list(id_group, list_id, task_list)
 
 
 @bot.command()
@@ -165,7 +194,7 @@ async def edit_pr(ctx, list_id, task_id, pr):
         write_task_list(id_group, list_id, task_list)
         await ctx.channel.send("Priority of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
-        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+        await ctx.channel.send("There's no list with name **" + list_id + "**")
     except IndexError:
         await ctx.channel.send(
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
@@ -183,7 +212,7 @@ async def edit_author(ctx, list_id, task_id, author):
         write_task_list(id_group, list_id, task_list)
         await ctx.channel.send("Author of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
-        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+        await ctx.channel.send("There's no list with name **" + list_id + "**")
     except IndexError:
         await ctx.channel.send(
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
@@ -199,7 +228,7 @@ async def edit_status(ctx, list_id, task_id, status):
         write_task_list(id_group, list_id, task_list)
         await ctx.channel.send("Status of task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
-        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+        await ctx.channel.send("There's no list with name **" + list_id + "**")
     except IndexError:
         await ctx.channel.send(
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
@@ -215,7 +244,7 @@ async def edit_task(ctx, list_id, task_id, task):
         write_task_list(id_group, list_id, task_list)
         await ctx.channel.send("Task **" + task_id + "** edited  successfully! " + reaction_emojis["thumb"])
     except FileNotFoundError:
-        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+        await ctx.channel.send("There's no list with name **" + list_id + "**")
     except IndexError:
         await ctx.channel.send(
             "Task **" + task_id + "** does not exist in list **" + list_id + "**, please check the task number.")
@@ -228,7 +257,7 @@ async def show_list(ctx, list_id):
         get_list = read_task_list(id_group, list_id)
         await ctx.channel.send(format_task_list(get_list))
     except FileNotFoundError:
-        await ctx.channel.send("Theres no list with name **" + list_id + "**")
+        await ctx.channel.send("There's no list with name **" + list_id + "**")
 
 
 # TODO END THE HELP ME ASAP.
@@ -236,6 +265,18 @@ async def show_list(ctx, list_id):
 async def help_me(ctx):
     with open(path_help_me, "r") as file:
         await ctx.channel.send(file.read())
+
+
+# COMMAND ERRORS
+@add_task.error
+async def add_task_error_info(ctx, error):
+    if isinstance(error, commands.BadArgument):
+        if "Converting" in str(error):
+            await ctx.channel.send(
+                "The chosen priority is not a number, please choose a **number** between **1** and **4**.")
+        elif "Member" in str(error):
+            await ctx.channel.send(str(error).replace('"', '**') + ".")
+    print(error)
 
 
 # BOT RUNNING WITH TOKEN.
