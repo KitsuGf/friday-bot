@@ -28,6 +28,7 @@ class Task:
 path = 'tk/tk.txt'
 tk_file = open(path, "r")
 path_help_me = 'src/help_me.txt'
+fridayID = '<@732652576108970084>'
 
 # Emojis
 pr_emojis = {
@@ -168,21 +169,28 @@ async def remove_list(ctx, task_list):
     except FileNotFoundError:
         await  ctx.channel.send("There's no list called " + task_list + " in my database.")
 
+#Borrar.
+@bot.command()
+async def queteden(ctx):
+    await  ctx.channel.send("Vale, que te den a ti también.")
+
 
 @bot.command()
-async def add_task(ctx, list_id, task, author="No one", pr=3, status="todo"):
+async def add_task(ctx, list_id, task, author=fridayID, pr=3, status="todo"):
     converter = MemberConverter()
     member = await converter.convert(ctx, author)
     if not add_task_check(pr, status):
         await ctx.channel.send(
             "Remember that the **priority** must be between **1** and **4** and the **status** must be choosen between **these**: \n\t"
             "`- todo`\n\t`- await`\n\t`- cancel`\n\t`- done`\n\t`- onwork`\n\t`- fixing`")
-    elif check_users_guild(member):
+    elif check_users_guild(member) or author is fridayID:
+        author = 'No one'
         id_group = str(ctx.guild.id)
         task_list = read_task_list(id_group, list_id)
         new_task = Task(len(task_list) + 1, task, author, pr, status)
         task_list.append(new_task)
         write_task_list(id_group, list_id, task_list)
+        await ctx.channel.send("Task **" + task + "** created successfully! " + reaction_emojis["thumb"])
 
 
 @bot.command()
