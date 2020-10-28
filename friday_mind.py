@@ -184,7 +184,6 @@ async def add_task(ctx, list_id, task, author=fridayID, pr=3, status="todo"):
             "Remember that the **priority** must be between **1** and **4** and the **status** must be choosen between **these**: \n\t"
             "`- todo`\n\t`- await`\n\t`- cancel`\n\t`- done`\n\t`- onwork`\n\t`- fixing`")
     elif check_users_guild(member) or author is fridayID:
-        author = 'No one'
         id_group = str(ctx.guild.id)
         task_list = read_task_list(id_group, list_id)
         new_task = Task(len(task_list) + 1, task, author, pr, status)
